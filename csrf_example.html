@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSRF Demonstration</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
+        .vulnerable, .protected { 
+            border: 1px solid #ddd; 
+            padding: 15px; 
+            margin-bottom: 20px; 
+        }
+        .vulnerable { background-color: #ffeeee; }
+        .protected { background-color: #eeffee; }
+        button { margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>CSRF Demonstration</h1>
+    
+    <div class="vulnerable">
+        <h2>Vulnerable Endpoint (No CSRF Protection)</h2>
+        <p>Balance: $<span id="vulnerableBalance">1000</span></p>
+        <button onclick="transferVulnerableFunds()">Transfer $50</button>
+        <p><small>Click to simulate a transfer (no protection)</small></p>
+    </div>
+
+    <div class="protected">
+        <h2>Protected Endpoint (With CSRF Token)</h2>
+        <p>Balance: $<span id="protectedBalance">1000</span></p>
+        <button onclick="transferProtectedFunds()">Transfer $50</button>
+        <p><small>Click to simulate a transfer (with CSRF token)</small></p>
+    </div>
+
+    <div>
+        <h3>Simulated Malicious Site</h3>
+        <button onclick="visitMaliciousSite()">Visit Malicious Site</button>
+    </div>
+
+    <script>
+        let vulnerableBalance = 1000;
+        let protectedBalance = 1000;
+        let csrfToken = generateCSRFToken();
+
+        function generateCSRFToken() {
+            return Math.random().toString(36).substring(2, 15) + 
+                   Math.random().toString(36).substring(2, 15);
+        }
+
+        function transferVulnerableFunds() {
+            vulnerableBalance -= 50;
+            document.getElementById('vulnerableBalance').textContent = vulnerableBalance;
+        }
+
+        function transferProtectedFunds() {
+            const token = document.getElementById('csrfToken').value;
+            
+            if (token === csrfToken) {
+                protectedBalance -= 50;
+                document.getElementById('protectedBalance').textContent = protectedBalance;
+            } 
+        }
+
+        function visitMaliciousSite() {
+            transferVulnerableFunds();
+        }
+
+        document.write(`
+            <div style="display:none;">
+                <input type="hidden" id="csrfToken" value="${csrfToken}">
+            </div>
+        `);
+    </script>
+</body>
+</html>
