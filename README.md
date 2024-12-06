@@ -5,4 +5,6 @@ This project demonstrates a Cross-Site Request Forgery (CSRF) attack using two w
 ---
 
 ### Step 1: Clone or Create the Project
-1. Open csrf_example.html with live server.
+
+
+### Step 2: Open csrf_example.html with live server.
